@@ -5,25 +5,33 @@ namespace JanakKapadia\HostingManager\Services;
 use Exception;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use JanakKapadia\HostingManager\Enums\ServerAvatar\CreateSiteEnum;
+use JanakKapadia\HostingManager\Traits\ClientRequest;
 
 class ServerAvatar
 {
+    use ClientRequest;
     public PendingRequest $http;
     protected string $baseUrl = "https://api.serveravatar.com";
+    protected array $headers;
     protected mixed $organizations;
     protected array $organization;
+
+    protected array $routes = [];
 
     /**
      * @throws Exception
      */
     public function __construct(public string $token, public $organizationId = null)
     {
-        $this->http = Http::withToken($this->token);
-
-        $this->organization['id'] =  $this->organizationId ?? $this->getOrganizations();
+        $routes = Config::get('route');
+        dd($routes);
+        $this->headers = [
+            'Authorization' => "Bearer $token"
+        ];
     }
 
     /**
@@ -32,20 +40,16 @@ class ServerAvatar
     public function getOrganizations(): void
     {
         try {
-            $getOrganization = $this->http->get("$this->baseUrl/organizations");
+            $getOrganization = $this->get('organization.list');
 
             if ($getOrganization->failed()) {
                 $errResponse = $getOrganization->json();
                 throw new Exception($errResponse['message'], $getOrganization->status());
             }
 
-            $this->organizations = $getOrganization->collect('organizations');
-
             if (!$this->organizations->count()) {
                 throw new Exception('No organization found!');
             }
-
-            $this->organization = $this->organizations->first();
 
         } catch (Exception $e) {
             Log::error('--server avatar get organizations--', [
@@ -53,7 +57,7 @@ class ServerAvatar
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
             ]);
-            throw new Exception('Something went wrong!');
+            throw new Exception($e->getMessage());
         }
     }
 

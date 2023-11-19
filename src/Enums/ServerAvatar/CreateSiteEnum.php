@@ -21,5 +21,4 @@ enum CreateSiteEnum
             'one_click' => ['wordpress', 'mautic', 'moodle', 'joomla', 'prestashop']
         };
     }
-
 }
