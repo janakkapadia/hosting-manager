@@ -2,6 +2,7 @@
     "name": "janakkapadia/hosting-manager",
     "description": "Hosting Providers SDK",
     "type": "package",
+    "version": "1.0.0",
     "license": "MIT",
     "authors": [
         {

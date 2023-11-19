@@ -27,7 +27,7 @@ class ServerAvatar
      */
     public function __construct(public string $token, public $organizationId = null)
     {
-        $routes = Config::get('route');
+        $routes = Config::get('route.server_avatar');
         dd($routes);
         $this->headers = [
             'Authorization' => "Bearer $token"

@@ -13,7 +13,7 @@ class HostingManagerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../', 'route');
+        $this->mergeConfigFrom(__DIR__.'/config/routes.php', 'route');
     }
 
     /**
